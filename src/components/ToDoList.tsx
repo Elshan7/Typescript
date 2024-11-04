@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../Redux/store';
-import { add, toggle } from '../Redux/feature/tasksSlice';
+import { add, deleted, toggle } from '../Redux/feature/tasksSlice';
 import { set } from '../Redux/feature/filterSlice';
 import { Filter } from '../types/types';
+import { FaTrash } from "react-icons/fa";
 
 const TodoList: React.FC = () => {
   const [newTask, setNewTask] = useState('');
@@ -20,6 +21,18 @@ const TodoList: React.FC = () => {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleAddTask();
+    }
+  };
+
+  
+  const getdeleted = (id: number) => {
+    dispatch(deleted (id));
+  };
+
+
   const filteredTasks = tasks.filter((task) => {
     if (filter === 'completed') return task.completed;
     if (filter === 'active') return !task.completed;
@@ -33,7 +46,8 @@ const TodoList: React.FC = () => {
           type="text"
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
-          placeholder="New task..."
+          onKeyDown={handleKeyDown}
+          placeholder="Add value..."
         />
         <button onClick={handleAddTask}>Add</button>
       </div>
@@ -59,6 +73,7 @@ const TodoList: React.FC = () => {
               onChange={() => dispatch(toggle(task.id))}
             />
             <span>{task.text}</span>
+            <FaTrash className='trash' onClick={() => getdeleted(task.id)} />
           </li>
         ))}
       </ul>
